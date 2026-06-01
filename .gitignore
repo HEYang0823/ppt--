@@ -1,0 +1,20 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# macOS
+.DS_Store
+
+# Output
+*.pptx
+*DALLE-prompts.md
+context_package.json
+
+# IDE
+.vscode/
+.idea/
+
+# Virtual env
+venv/
+.venv/
