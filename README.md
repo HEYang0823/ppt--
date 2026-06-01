@@ -4,23 +4,46 @@
 
 ## 这是什么？
 
-一个面向高校教师的 **PPT 半自动生产流水线**。你只需要：
+一个面向高校教师的 **PPT 半自动/全自动生产流水线**。提供两种使用模式：
 
-1. 填写一份 5 分钟的 brief（主题、页数、参考文件路径）
-2. 引擎自动读取你本地的参考 PPTX 文件，提取全部内容
-3. 结合你的需求，生成结构化的幻灯片配置文件
-4. 一键输出：**可编辑 PPTX** + **关键页 AI 图像生成 prompt**
+| 模式 | 命令 | 需要什么 |
+|------|------|------|
+| **Agent 全自动** 🤖 | `python3 ppt_agent.py "主题" --refs 参考目录/` | API Key（Anthropic/OpenAI/DeepSeek 任一） |
+| **手动精细控制** ✋ | 填 brief → 发给 AI → `python3 make_ppt.py config.json` | 任何 AI 工具（ChatGPT/DeepSeek 网页版等，免费） |
+
+✅ 两种模式都**不需要 Claude Code**，不需要任何付费桌面软件。
+
+## 快速开始（Agent 模式，全自动）
+
+### 1. 安装
+
+```bash
+pip3 install python-pptx
+# 如果要用 Agent 模式（调 LLM API），还需：
+pip3 install anthropic   # 或者不装，Agent 会用 HTTP 方式调 API
+```
+
+### 2. 设置 API Key
+
+```bash
+cp .env.example .env
+# 编辑 .env，填入你的 API Key
+# 支持: ANTHROPIC_API_KEY / OPENAI_API_KEY / DEEPSEEK_API_KEY
+```
+
+### 3. 一行命令出 PPT
+
+```bash
+python3 ppt_agent.py "帮我做一个关于数据交易合规的PPT，20页" --refs ~/Downloads/参考PPTX/
+```
+
+Agent 自动完成：读取参考文件 → 调 LLM → 生成配置 → 渲染 PPTX → 输出 DALL-E prompts。
+
+### 4. 输出
 
 ```
-你的 brief.md + 参考 PPTX  →  read_refs.py  →  context_package.json
-                                                    ↓
-                                           Claude / 你的 AI 工具
-                                                    ↓
-                                          slides_config.json
-                                                    ↓
-                                            make_ppt.py
-                                               ↙     ↘
-                                     📊 PPTX        🤖 DALL-E Prompts
+~/Desktop/<name>.pptx                  ← 可编辑教学 PPT
+~/Desktop/<name>-DALLE-prompts.md      ← 关键页 AI 图像 prompt（复制到即梦/DALL-E）
 ```
 
 ## 效果展示
@@ -161,12 +184,14 @@ python3 make_ppt.py slides_config.json
 ```
 teaching-ppt-engine/
 ├── README.md                          ← 本文件
-├── LICENSE                            ← 非商业使用许可
-├── make_ppt.py                        ← 通用 PPT 渲染引擎（核心）
-├── read_refs.py                       ← 参考 PPTX 文件读取器
+├── LICENSE                            ← CC BY-NC 4.0 非商业许可
+├── .env.example                       ← API Key 配置模板
+├── ppt_agent.py                       ← 🤖 Agent 全自动模式（调 LLM）
+├── make_ppt.py                        ← 🎨 通用 PPT 渲染引擎（核心）
+├── read_refs.py                       ← 📂 参考 PPTX 文件读取器
 ├── examples/
-│   ├── brief_template.md              ← brief 模板
-│   └── slides_compliance.json         ← 20页示例配置
+│   ├── brief_template.md              ← 手动模式的 brief 模板
+│   └── slides_compliance.json         ← 20 页示例配置
 └── .gitignore
 ```
 
